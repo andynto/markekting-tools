@@ -1,40 +1,4 @@
-# 金御賞 ChatGPT API 行銷內容產生器 PWA
-
-本版本已完成：
-- 品牌選項保留：金御賞集團、金子半之助、辻半、宇奈鰻魚飯
-- 移除：頑固和食、米與多蜜
-- 前端 PWA：可安裝到手機/電腦
-- 後端 API：使用 Vercel Serverless Functions 串接 OpenAI API
-- 文字：Facebook、Instagram、Threads、新聞稿、LINE OA、簡訊、短影音腳本、活動排程
-- 圖片：OpenAI Images API 產生主視覺，並保留本機 Canvas 海報備援
-
-## 為什麼不要直接放 GitHub Pages？
-
-OpenAI API Key 不能放在前端網頁，否則任何人都可以看到並盜用。
-因此本版本建議部署到 Vercel，將 API Key 存在 Vercel Environment Variables。
-
-## 部署到 Vercel
-
-1. 把整個資料夾上傳到 GitHub repository 根目錄。
-2. 到 https://vercel.com/new 匯入你的 GitHub repository。
-3. 在 Vercel 專案設定 Environment Variables 加入：
-   - OPENAI_API_KEY：貼上你在 OpenAI Platform 建立的 API key
-   - OPENAI_TEXT_MODEL，預設 gpt-5.5
-   - OPENAI_IMAGE_MODEL，預設 gpt-image-1-mini
-4. Deploy。
-5. 打開 Vercel 網址即可使用，並可安裝成 PWA。
-
-## 本機測試
-
-```bash
-npm install
-cp .env.example .env.local
-npm run dev
-```
-
-然後開啟 Vercel Dev 顯示的網址。
-
-## 注意
-
-- 圖片生成會產生 API 費用，請設定用量上限。
-- 若 API 尚未設定，可使用「本機規則產生備案」。
+const CACHE='kingoshou-interactive-marketing-v1';
+const ASSETS=['./','./index.html','./styles.css','./app.js','./manifest.json','./icons/icon-192.png','./icons/icon-512.png'];
+self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)))});
+self.addEventListener('fetch',event=>{event.respondWith(caches.match(event.request).then(cached=>cached||fetch(event.request)))});
