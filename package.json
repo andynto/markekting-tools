@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#111827" />
+  <link rel="manifest" href="manifest.json" />
+  <title>金御賞 ChatGPT 行銷內容產生器</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <nav class="topbar">
+    <div class="brandBlock">
+      <div class="brandmark">金</div>
+      <div>
+        <strong>金御賞 ChatGPT 行銷內容產生器</strong>
+        <small>社群文案・新聞稿・LINE OA・短影音腳本・AI 圖片</small>
+      </div>
+    </div>
+    <button id="installBtn" class="ghost hidden">安裝工具</button>
+  </nav>
+
+  <main class="layout">
+    <section class="hero card">
+      <div class="eyebrow">Kingoshou AI Marketing Suite</div>
+      <h1>輸入活動內容，透過 ChatGPT API 產出可直接使用的行銷素材。</h1>
+      <p>此版本已移除「頑固和食」與「米與多蜜」，品牌選項保留金御賞集團、金子半之助、辻半、宇奈鰻魚飯。文字由 OpenAI API 產生，圖片可用 API 產生主視覺，也保留本機海報預覽作為備援。</p>
+      <div class="quickStats">
+        <span>Facebook / IG / Threads</span>
+        <span>新聞稿 / 媒體邀約</span>
+        <span>LINE OA / 簡訊</span>
+        <span>AI 圖片生成</span>
+      </div>
+    </section>
+
+    <section class="card formCard">
+      <h2>1. 輸入活動資料</h2>
+      <div class="grid2">
+        <label>品牌
+          <select id="brand">
+            <option value="金御賞集團">金御賞集團</option>
+            <option value="金子半之助">金子半之助</option>
+            <option value="辻半">辻半</option>
+            <option value="宇奈鰻魚飯">宇奈鰻魚飯</option>
+          </select>
+        </label>
+        <label>行銷主題
+          <select id="theme">
+            <option value="新品上市">新品上市</option>
+            <option value="季節限定">季節限定</option>
+            <option value="週年慶">週年慶</option>
+            <option value="會員活動">會員活動</option>
+            <option value="節慶檔期">節慶檔期</option>
+            <option value="商場導流">商場導流</option>
+            <option value="媒體邀約">媒體邀約</option>
+            <option value="品牌故事">品牌故事</option>
+            <option value="顧客回訪">顧客回訪</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="grid3">
+        <label>目標客群
+          <select id="audience">
+            <option value="上班族午餐客">上班族午餐客</option>
+            <option value="女性顧客">女性顧客</option>
+            <option value="家庭客">家庭客</option>
+            <option value="美食愛好者">美食愛好者</option>
+            <option value="商場逛街客">商場逛街客</option>
+            <option value="高回訪會員">高回訪會員</option>
+          </select>
+        </label>
+        <label>語氣風格
+          <select id="tone">
+            <option value="日式質感">日式質感</option>
+            <option value="親切生活感">親切生活感</option>
+            <option value="專業新聞稿">專業新聞稿</option>
+            <option value="高級感">高級感</option>
+            <option value="年輕社群感">年輕社群感</option>
+          </select>
+        </label>
+        <label>主要目標
+          <select id="goal">
+            <option value="提升來客數">提升來客數</option>
+            <option value="提高客單價">提高客單價</option>
+            <option value="新品試吃與曝光">新品試吃與曝光</option>
+            <option value="會員回訪">會員回訪</option>
+            <option value="媒體報導">媒體報導</option>
+            <option value="社群互動">社群互動</option>
+          </select>
+        </label>
+      </div>
+
+      <label>活動內容 / 產品賣點 / 優惠方式
+        <textarea id="brief" placeholder="例：宇奈鰻魚飯推出蒲燒鰻魚飯活動，強調炭火香氣、秘傳醬汁、現烤口感與日式職人精神。活動期間 6/1-6/30，會員加購吸物優惠。"></textarea>
+      </label>
+
+      <label>希望強調的關鍵字
+        <input id="keywords" placeholder="例：江戶前、現炸、職人、季節限定、會員優惠" />
+      </label>
+
+      <div class="grid2">
+        <label>活動期間
+          <input id="period" placeholder="例：2026/6/1 - 2026/6/30" />
+        </label>
+        <label>門市 / 商場 / 區域
+          <input id="location" placeholder="例：台北微風、台中、全台門市" />
+        </label>
+      </div>
+
+      <div class="actions">
+        <button id="generateBtn" class="primary" onclick="generateWithAI()">用 ChatGPT API 產出全部內容</button>
+        <button onclick="generateLocalFallback()">本機規則產生備案</button>
+        <button onclick="generateAiImage()">用 API 產生圖片</button>
+        <button onclick="drawPoster()">產生本機海報</button>
+        <button onclick="copyAll()">複製全部</button>
+        <button onclick="downloadText()">下載文字檔</button>
+      </div>
+      <p id="status" class="note">部署到 Vercel 並設定 OPENAI_API_KEY 後，即可使用 ChatGPT API。</p>
+    </section>
+
+    <section class="card outputCard">
+      <h2>2. 產出內容</h2>
+      <div class="tabs">
+        <button class="tab active" onclick="showTab(event,'social')">社群文案</button>
+        <button class="tab" onclick="showTab(event,'press')">新聞稿</button>
+        <button class="tab" onclick="showTab(event,'line')">LINE / 簡訊</button>
+        <button class="tab" onclick="showTab(event,'video')">短影音腳本</button>
+        <button class="tab" onclick="showTab(event,'image')">圖片提示詞</button>
+        <button class="tab" onclick="showTab(event,'calendar')">活動排程</button>
+      </div>
+      <pre id="social" class="panelText"></pre>
+      <pre id="press" class="panelText hidden"></pre>
+      <pre id="line" class="panelText hidden"></pre>
+      <pre id="video" class="panelText hidden"></pre>
+      <pre id="image" class="panelText hidden"></pre>
+      <pre id="calendar" class="panelText hidden"></pre>
+    </section>
+
+    <section class="card posterCard">
+      <h2>3. 圖片視覺稿 / API 圖片</h2>
+      <div id="apiImageBox" class="apiImageBox hidden">
+        <img id="apiImage" alt="AI 生成圖片" />
+      </div>
+      <canvas id="poster" width="1080" height="1080"></canvas>
+      <div class="actions">
+        <button onclick="downloadPoster()">下載本機海報 PNG</button>
+        <button onclick="downloadApiImage()">下載 API 圖片</button>
+      </div>
+      <p class="note">API 圖片會產生成本；本機海報不需 API，適合作為快速草稿。</p>
+    </section>
+  </main>
+
+  <footer>© 金御賞公司｜ChatGPT API 行銷內容輔助工具</footer>
+  <script src="app.js"></script>
+</body>
+</html>

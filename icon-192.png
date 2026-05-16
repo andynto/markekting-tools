@@ -1,0 +1,24 @@
+import OpenAI from 'openai';
+
+const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+export default async function handler(req, res) {
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+  if (!process.env.OPENAI_API_KEY) return res.status(500).json({ error: 'OPENAI_API_KEY 尚未設定' });
+
+  try {
+    const data = req.body || {};
+    const model = process.env.OPENAI_IMAGE_MODEL || 'gpt-image-1-mini';
+    const prompt = `${data.imagePrompt || ''}\n\n請產出高質感日式餐飲社群主視覺，不要在圖片中放大量文字，避免錯字。品牌：${data.brand || '金御賞'}，主題：${data.theme || '行銷活動'}。`;
+    const result = await client.images.generate({
+      model,
+      prompt,
+      size: '1024x1024'
+    });
+    const image = result.data?.[0];
+    if (!image) throw new Error('沒有收到圖片結果');
+    return res.status(200).json({ b64: image.b64_json || null, imageUrl: image.url || null });
+  } catch (error) {
+    return res.status(500).json({ error: error.message || 'OpenAI 圖片 API 呼叫失敗' });
+  }
+}
